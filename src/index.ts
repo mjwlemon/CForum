@@ -1471,8 +1471,8 @@ const user = await env.cforum_db.prepare('SELECT * FROM users WHERE email_change
 				}
 
 				const { success, meta } = await env.cforum_db.prepare(
-					'INSERT INTO users (email, username, password, role, verified, verification_token) VALUES (?, ?, ?, "user", 0, ?)'
-				).bind(email, username, passwordHash, verificationToken).run();
+					'INSERT INTO users (email, username, password, role, verified, verification_token) VALUES (?, ?, ?, "user",1, NULL)'
+				).bind(email, username, passwordHash).run();
 
 				if (success) {
 					// Generate Default Avatar (Identicon)
