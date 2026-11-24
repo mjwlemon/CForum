@@ -1740,6 +1740,37 @@ const user = await env.cforum_db.prepare('SELECT * FROM users WHERE email_change
 		}
 
 		// GET /api/posts/:id/comments
+		if (url.pathname.match(/^\/api\/posts\/\d+\/comments$/) && method === 'POST') {
+			const postId = url.pathname.split('/')[3];
+			try {
+				const userPayload = await authenticate(request);
+				const body = await request.json() as any;
+				const { content, parent_id } = body;
+
+				// 1. 验证内容
+				if (!content || isVisuallyEmpty(content)) {
+					return jsonResponse({ error: '评论内容不能为空' }, 400);
+				}
+				if (content.length > 1000) {
+					return jsonResponse({ error: '评论内容过长' }, 400);
+				}
+
+				// 2. 验证帖子是否存在
+				const post = await env.cforum_db.prepare('SELECT id FROM posts WHERE id = ?').bind(postId).first();
+				if (!post) return jsonResponse({ error: '帖子不存在' }, 404);
+
+				// 3. 插入数据库
+				const { success } = await env.cforum_db.prepare(
+					'INSERT INTO comments (post_id, author_id, content, parent_id) VALUES (?, ?, ?, ?)'
+				).bind(postId, userPayload.id, content.trim(), parent_id || null).run();
+
+				await security.logAudit(userPayload.id, 'CREATE_COMMENT', 'comment', 'new', { post_id: postId }, request);
+
+				return jsonResponse({ success: true }, 201);
+			} catch (e) {
+				return handleError(e);
+			}
+		}
 		if (url.pathname.match(/^\/api\/posts\/\d+\/comments$/) && method === 'GET') {
 			const postId = url.pathname.split('/')[3];
 			try {
