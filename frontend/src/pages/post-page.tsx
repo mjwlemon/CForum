@@ -187,6 +187,10 @@ export function PostPage() {
 
 	async function submitComment(e: React.FormEvent) {
 		e.preventDefault();
+    	if (e.nativeEvent && (e.nativeEvent as any).isComposing) {
+        	return;
+    	}
+
 		if (!postId) return;
 		if (!user) {
 			window.location.href = '/login';
@@ -649,7 +653,19 @@ export function PostPage() {
 
 								<form className="space-y-3" onSubmit={submitComment}>
 									{commentError ? <div className="rounded-md border border-destructive/50 bg-destructive/5 p-3 text-sm text-destructive">{commentError}</div> : null}
-									<Textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} rows={4} placeholder="写下你的评论..." />
+									<Textarea 
+										value={newComment} 
+										onChange={(e) => setNewComment(e.target.value)}
+										onKeyDown={(e) => {
+        									if (e.key === 'Enter' && !e.shiftKey) {
+            									// 如果正在输入法拼写状态，不要触发提交
+            									if ((e.nativeEvent as any).isComposing) return;
+            									// 彻底禁止无 Shift 的单回车提交，避免误触
+            									e.preventDefault(); 
+        									}
+    									}} 
+										rows={4} 
+										placeholder="写下你的评论..." />
 						<TurnstileWidget enabled={turnstileActive} siteKey={siteKey} onToken={setTurnstileToken} resetKey={turnstileResetKey} />
 									<div className="flex items-center gap-2">
 										<Button type="submit" disabled={commentLoading}>
