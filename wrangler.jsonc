@@ -6,6 +6,10 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "cforum",
 	"main": "src/index.ts",
+	"assets": {
+		"directory": "./dist",
+		"not_found_handling": "single-page-application"
+	},
 	"compatibility_date": "2025-09-27",
 	"compatibility_flags": [
 		"global_fetch_strictly_public"
@@ -84,7 +88,7 @@
 	"env": {
 		"production": {
 			"vars": {
-				"WORKER_URL": "https://cforum.adysec.workers.dev"
+				"WORKER_URL": "https://wtwoplt.dpdns.org"
 			}
 		},
 		"development": {
