@@ -1449,7 +1449,7 @@ const user = await env.cforum_db.prepare('SELECT * FROM users WHERE email_change
 
 				// Pre-check email deliverability (Send a test email first)
 				// Note: We don't insert user yet. If email fails, we abort.
-				const baseUrl = getBaseUrl();
+				/*const baseUrl = getBaseUrl();
 				const verifyLink = `${baseUrl}/api/verify?token=${verificationToken}`;
 				
 				const emailHtml = `
@@ -1468,7 +1468,7 @@ const user = await env.cforum_db.prepare('SELECT * FROM users WHERE email_change
 						error: `验证邮件发送失败: ${errorMsg}`,
 						details: '请检查邮箱地址或联系管理员检查 SMTP 配置'
 					}, 400);
-				}
+				}*/
 
 				const { success, meta } = await env.cforum_db.prepare(
 					'INSERT INTO users (email, username, password, role, verified, verification_token) VALUES (?, ?, ?, "user",1, NULL)'
@@ -1489,7 +1489,7 @@ const user = await env.cforum_db.prepare('SELECT * FROM users WHERE email_change
 					}
 				}
 
-				return jsonResponse({ success, message: '注册成功，请前往邮箱完成验证。' }, 201);
+				return jsonResponse({ success, message: '注册成功，请直接登录。' }, 201);
 			} catch (e: any) {
 				if (e.message && e.message.includes('UNIQUE constraint failed')) {
 					return jsonResponse({ error: 'Email already exists' }, 409);
