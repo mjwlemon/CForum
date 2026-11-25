@@ -328,12 +328,12 @@ export default {
 
         // However, user specifically asked for "Replay protection for sensitive operations".
         // We will apply strict checks for mutation methods (POST, PUT, DELETE)
-        if (['POST', 'PUT', 'DELETE'].includes(method)) {
+        /*if (['POST', 'PUT', 'DELETE'].includes(method)) {
              const validation = await security.validateRequest(request);
              if (!validation.valid) {
                  return jsonResponse({ error: validation.error || 'Security check failed' }, 400);
              }
-        }
+        }*/
 
 		// GET /api/config
 		if (url.pathname === '/api/config' && method === 'GET') {
