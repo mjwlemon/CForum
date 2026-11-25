@@ -41,6 +41,8 @@ export function AdminPage() {
 	const [editUsername, setEditUsername] = React.useState('');
 	const [editAvatarUrl, setEditAvatarUrl] = React.useState('');
 	const [editPassword, setEditPassword] = React.useState('');
+	const [editRole, setEditRole] = React.useState('user');
+	const [editVerified, setEditVerified] = React.useState(0);
 
 	React.useEffect(() => {
 		if (!token) window.location.href = '/login';
@@ -161,6 +163,8 @@ export function AdminPage() {
 		setEditUsername(u.username || '');
 		setEditAvatarUrl(u.avatar_url || '');
 		setEditPassword('');
+		setEditRole(u.role || 'user');
+		setEditVerified(u.verified || 0);
 		setEditOpen(true);
 	}
 
@@ -176,7 +180,9 @@ export function AdminPage() {
 					email: editEmail || undefined,
 					username: editUsername || undefined,
 					avatar_url: editAvatarUrl,
-					password: editPassword || undefined
+					password: editPassword || undefined,
+					role: editRole,
+					verified: editVerified
 				})
 			});
 			setEditOpen(false);
@@ -513,6 +519,28 @@ export function AdminPage() {
 									<div className="grid gap-2">
 										<Label htmlFor="edit-password">新密码 (留空不变)</Label>
 										<Input id="edit-password" value={editPassword} onChange={(e) => setEditPassword(e.target.value)} />
+									</div>
+									<div className="grid gap-2">
+										<Label htmlFor="edit-role">角色</Label>
+										<select
+											id="edit-role"
+											className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+											value={editRole}
+											onChange={(e) => setEditRole(e.target.value)}
+										>
+											<option value="user">普通用户 (user)</option>
+											<option value="admin">管理员 (admin)</option>
+										</select>
+									</div>
+									<div className="flex items-center gap-2 mt-2">
+										<input
+											type="checkbox"
+											id="edit-verified"
+											className="h-4 w-4"
+											checked={editVerified === 1}
+											onChange={(e) => setEditVerified(e.target.checked ? 1 : 0)}
+										/>
+										<Label htmlFor="edit-verified" className="cursor-pointer">已验证邮箱</Label>
 									</div>
 								</div>
 								<DialogFooter>
