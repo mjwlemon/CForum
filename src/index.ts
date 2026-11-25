@@ -934,7 +934,7 @@ const user = await env.cforum_db.prepare('SELECT * FROM users WHERE email_change
 				if (userPayload.role !== 'admin') return jsonResponse({ error: 'Unauthorized' }, 403);
 
 				const body = await request.json() as any;
-				const { password, email, username, avatar_url } = body;
+				const { password, email, username, avatar_url, role, verified} = body;
 
 				if (password && (password.length < 8 || password.length > 16)) return jsonResponse({ error: 'Password must be 8-16 characters' }, 400);
 
@@ -970,6 +970,15 @@ const user = await env.cforum_db.prepare('SELECT * FROM users WHERE email_change
 							ctx.waitUntil(sendEmail(user.email, '您的头像已更新', emailHtml, env).catch(console.error));
 						}
 					}
+				}
+				// 更新角色
+				if (role) {
+    				await env.cforum_db.prepare('UPDATE users SET role = ? WHERE id = ?').bind(role, id).run();
+				}
+
+				// 更新验证状态
+				if (verified !== undefined) {
+    				await env.cforum_db.prepare('UPDATE users SET verified = ? WHERE id = ?').bind(verified ? 1 : 0, id).run();
 				}
 				if (username) {
 					if (username.length > 20) return jsonResponse({ error: 'Username too long (Max 20 chars)' }, 400);
