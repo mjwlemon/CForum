@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "wtwop-cforum",
+	"name": "wtpop-forum",
 	"main": "src/index.ts",
 	"assets": {
 		"directory": "./public",
